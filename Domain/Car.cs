@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace ExpressVoitures.Domain
@@ -35,6 +36,7 @@ namespace ExpressVoitures.Domain
         public DateTime PurchaseDate { get; set; }
 
         [Required(ErrorMessage = "Le prix d'achat est obligatoire.")]
+        [Precision(18, 2)]
         public decimal PurchasePrice { get; set; }
 
         // Navigation : une voiture peut avoir plusieurs réparations

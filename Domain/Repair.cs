@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExpressVoitures.Domain
 {
@@ -13,6 +14,7 @@ namespace ExpressVoitures.Domain
         public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Le coût de la réparation est obligatoire.")]
+        [Precision(18, 2)]
         public decimal Cost { get; set; }
 
         // Navigation : accès à la voiture parente
