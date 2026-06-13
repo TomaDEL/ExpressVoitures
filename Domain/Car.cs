@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-
+using ExpressVoitures.Attributes;
 
 namespace ExpressVoitures.Domain
 {
@@ -12,14 +12,8 @@ namespace ExpressVoitures.Domain
         public string? VIN { get; set; }
 
         [Required]
-        [Range(1990, 9999, ErrorMessage = "L'année doit être entre 1990 et l'année actuelle.")]
+        [CurrentYearMax(1990, ErrorMessage = "L'année doit être entre 1990 et l'année actuelle.")]
         public int Year { get; set; }
-
-        [Required(ErrorMessage = "La marque est obligatoire.")]
-        public string Brand { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Le modèle est obligatoire.")]
-        public string Model { get; set; } = string.Empty;
 
         // Finition (ex : LE, Sport, XLT, ...)
         public string? Trim { get; set; }
@@ -36,10 +30,16 @@ namespace ExpressVoitures.Domain
         public DateTime PurchaseDate { get; set; }
 
         [Required(ErrorMessage = "Le prix d'achat est obligatoire.")]
-        [Precision(18, 2)]
+        [Precision(8, 2)]
         public decimal PurchasePrice { get; set; }
 
-        // Navigation : une voiture peut avoir plusieurs réparations
-        public ICollection<Repair> Repairs { get; set; } = new List<Repair>();
+        // Clé étrangère : à quel modèle de voiture appartient cette voiture
+        public int CarModelId { get; set; }
+
+        // Navigation : accès au modèle de voiture parente
+        public CarModel? CarModel { get; set; }
+
+        // Navigation : vers les réparations de cette voiture
+        public ICollection<CarRepair> CarRepairs { get; set; } = new List<CarRepair>();
     }
 }
