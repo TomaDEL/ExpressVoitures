@@ -18,6 +18,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IRepairTypeService, RepairTypeService>();
+builder.Services.AddScoped<ICarModelService, CarModelService>();
 
 var app = builder.Build();
 
