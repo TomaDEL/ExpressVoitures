@@ -1,4 +1,5 @@
 using ExpressVoitures.Data;
+using ExpressVoitures.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IRepairTypeService, RepairTypeService>();
 
 var app = builder.Build();
 

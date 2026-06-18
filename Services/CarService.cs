@@ -61,7 +61,7 @@ namespace ExpressVoitures.Services
             }
             var setting = await _context.Settings.FirstOrDefaultAsync();
             var markup = setting?.Markup ?? 500;
-            var totalRepairCost = car.CarRepairs.Sum(r => r.Cost);
+            var totalRepairs = car.CarRepairs.Sum(r => r.Cost);
 
             return car.PurchasePrice + totalRepairs + markup;
         }
