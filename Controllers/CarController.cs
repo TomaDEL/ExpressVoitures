@@ -18,7 +18,16 @@ namespace ExpressVoitures.Controllers
             _carModelService = carModelService;
         }
 
+        // GET /Car - catalogue public
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var cars = await _carService.GetAllCarsAsync();
+            return View(cars);
+        }
+
         // GET /Car/Details/5 - fiche détail public
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var car = await _carService.GetCarByIdAsync(id);
@@ -32,6 +41,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Car/Create - formulaire d'ajout (admin)
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Create()
         {
@@ -56,6 +66,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Car/Edit/5 - formulaire de modification (admin)
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
@@ -97,6 +108,7 @@ namespace ExpressVoitures.Controllers
 
         // GET /Car /GetModelsByBrand/5
         // Utilisé par le JavaScript pour filtrer les modèles selon la marque choisie
+        [HttpGet]
         public async Task<IActionResult> GetModelsByBrand(int brandId)
         {
             var models = await _carModelService.GetCarModelsByBrandIdAsync(brandId);

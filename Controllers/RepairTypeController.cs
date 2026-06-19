@@ -14,12 +14,14 @@ namespace ExpressVoitures.Controllers
             _repairTypeService = repairTypeService;
         }
         // GET /RepairType
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var repairTypes = await _repairTypeService.GetAllRepairTypesAsync();
             return View(repairTypes);
         }
         // GET /RepairType/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -37,6 +39,7 @@ namespace ExpressVoitures.Controllers
             return View(repairType);
         }
         // GET /RepairType/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var repairType = await _repairTypeService.GetRepairTypeByIdAsync(id);

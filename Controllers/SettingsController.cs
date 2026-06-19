@@ -15,6 +15,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Settings
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var settings = await _context.Settings.FirstOrDefaultAsync();

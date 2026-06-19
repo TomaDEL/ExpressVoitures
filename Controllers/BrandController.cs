@@ -15,6 +15,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Brand
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var brands = await _brandService.GetAllBrandsAsync();
@@ -22,6 +23,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Brand/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -41,6 +43,7 @@ namespace ExpressVoitures.Controllers
         }
 
         // GET /Brand/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var brand = await _brandService.GetBrandByIdAsync(id);
