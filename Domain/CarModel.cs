@@ -17,5 +17,8 @@ namespace ExpressVoitures.Domain
 
         // Navigation vers les voitures de ce modèle
         public ICollection<Car> Cars { get; set; } = new List<Car>();
+
+        // Navigation vers les finitions de ce modèle
+        public ICollection<Trim> Trims { get; set; } = new List<Trim>();
     }
 }

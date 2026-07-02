@@ -16,7 +16,9 @@ namespace ExpressVoitures.Domain
         public int Year { get; set; }
 
         // Finition (ex : LE, Sport, XLT, ...)
-        public string? Trim { get; set; }
+        [Required(ErrorMessage = "La finition est obligatoire.")]
+        public int TrimId { get; set; }
+        public Trim? Trim { get; set; }
 
         public string? Description { get; set; }
 

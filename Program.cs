@@ -17,6 +17,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ITrimService, TrimService>();
 builder.Services.AddScoped<IRepairTypeService, RepairTypeService>();
 builder.Services.AddScoped<ICarModelService, CarModelService>();
 

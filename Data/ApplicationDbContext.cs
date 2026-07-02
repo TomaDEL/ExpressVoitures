@@ -15,6 +15,7 @@ namespace ExpressVoitures.Data
         public DbSet<Car> Cars { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<CarModel> CarModels { get; set; }
+        public DbSet<Trim> Trims { get; set; }
         public DbSet<RepairType> RepairTypes { get; set; }
         public DbSet<CarRepair> CarRepairs { get; set; }
         public DbSet<Settings> Settings { get; set; }
@@ -22,6 +23,15 @@ namespace ExpressVoitures.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+
+            // Désactive le "cascade delete" sur la relation Trim -> Car
+            // pour éviter les chemins de cascade multiples
+            builder.Entity<Car>()
+                .HasOne(c => c.Trim)
+                .WithMany(t => t.Cars)
+                .HasForeignKey(c => c.TrimId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Seed : valeur initiale de la plus-valus de Jacques
             builder.Entity<Settings>().HasData(

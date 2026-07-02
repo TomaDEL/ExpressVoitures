@@ -10,12 +10,14 @@ namespace ExpressVoitures.Controllers
         private readonly ICarService _carService;
         private readonly IBrandService _brandService;
         private readonly ICarModelService _carModelService;
+        private readonly ITrimService _trimService;
 
-        public CarController(ICarService carService, IBrandService brandService, ICarModelService carModelService)
+        public CarController(ICarService carService, IBrandService brandService, ICarModelService carModelService, ITrimService trimService)
         {
             _carService = carService;
             _brandService = brandService;
             _carModelService = carModelService;
+            _trimService = trimService;
         }
 
         // GET /Car - catalogue public
@@ -106,13 +108,26 @@ namespace ExpressVoitures.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET /Car /GetModelsByBrand/5
-        // Utilisé par le JavaScript pour filtrer les modèles selon la marque choisie
+        // GET /Car/GetModelsByBrand/5
+        // Renvoie la liste des modèles pour une marque donnée (utilisé par AJAX)
         [HttpGet]
         public async Task<IActionResult> GetModelsByBrand(int brandId)
         {
             var models = await _carModelService.GetCarModelsByBrandIdAsync(brandId);
             var result = models.Select(m => new { m.Id, m.Name }).ToList();
+
+            return Json(result);
+        }
+
+        // Finition selon le modèle choisi
+        [HttpGet]
+        public async Task<IActionResult> GetTrimsByModel(int carModelId)
+        {
+            var trims = await  _trimService.GetTrimsByCarModelIdAsync(carModelId);
+
+            var result = trims
+                .Select(t => new { t.Id, t.Name })
+                .ToList();
 
             return Json(result);
         }
