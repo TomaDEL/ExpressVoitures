@@ -17,6 +17,7 @@ namespace ExpressVoitures.Services
             return await _context.Cars
                 .Include(c => c.CarModel)
                     .ThenInclude(m => m.Brand)
+                .Include(c => c.Trim)
                 .Include(c => c.CarRepairs)
                     .ThenInclude(cr => cr.RepairType)
                 .ToListAsync();
@@ -26,6 +27,7 @@ namespace ExpressVoitures.Services
             return await _context.Cars
                 .Include(c => c.CarModel)
                     .ThenInclude(m => m.Brand)
+                .Include (c => c.Trim)
                 .Include(c => c.CarRepairs)
                     .ThenInclude(cr => cr.RepairType)
                 .FirstOrDefaultAsync(c => c.Id == id);

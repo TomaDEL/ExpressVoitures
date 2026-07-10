@@ -15,7 +15,8 @@ namespace ExpressVoitures.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            // Redirige automatiquement vers le catalogue de voitures
+            return RedirectToAction("Index", "Car");
         }
 
         public IActionResult Privacy()

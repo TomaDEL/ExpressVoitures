@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Voiture supprimée";
+    ViewData["Page"] = "Accueil";
+}
+
+<div style="display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 60vh; text-align: center;
+            padding: 48px;">
+
+    <h1 class="titre-principal" style="font-size: 56px; color: var(--ev-gris-texte);">
+        @ViewBag.CarName
+    </h1>
+
+    <p style="color: var(--ev-marron); font-size: 16px; margin-top: 16px;">
+        a bien été supprimée
+    </p>
+
+    <a class="btn-express" style="margin-top: 64px;"
+       asp-controller="Car"
+       asp-action="Index">
+        Retour à l'accueil
+    </a>
+</div>

@@ -25,6 +25,14 @@ namespace ExpressVoitures.Controllers
         public async Task<IActionResult> Index()
         {
             var cars = await _carService.GetAllCarsAsync();
+
+            // Calcule le prix de vente pour cahque voiture et le stocke dans un dictionnaire Id -> Prix
+            var sellingPrices = new Dictionary<int, decimal>();
+            foreach (var car in cars)
+            {
+                sellingPrices[car.Id] = await _carService.GetSellingPriceAsync(car.Id);
+            }
+            ViewBag.SellingPrices = sellingPrices;
             return View(cars);
         }
 
@@ -55,16 +63,42 @@ namespace ExpressVoitures.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Car car)
+        public async Task<IActionResult> Create(Car car, IFormFile? PhotoFile)
         {
             if (ModelState.IsValid)
             {
+                if (PhotoFile != null && PhotoFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(
+                        Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var fileName = Guid.NewGuid().ToString()
+                        + Path.GetExtension(PhotoFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await PhotoFile.CopyToAsync(stream);
+                    }
+
+                    car.PhotoUrl = "/uploads/" + fileName;
+                }
+
                 await _carService.AddCarAsync(car);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("CreateSuccess");
             }
 
             ViewBag.Brands = await _brandService.GetAllBrandsAsync();
             return View(car);
+        }
+
+        // GET /Car/CreateSuccess
+        [HttpGet]
+        [Authorize]
+        public IActionResult CreateSuccess()
+        {
+            return View();
         }
 
         // GET /Car/Edit/5 - formulaire de modification (admin)
@@ -104,8 +138,11 @@ namespace ExpressVoitures.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetUnavailable(int id)
         {
+            var car = await _carService.GetCarByIdAsync(id);
             await _carService.SetUnavailableAsync(id);
-            return RedirectToAction(nameof(Index));
+
+            ViewBag.CarName = $"{car?.Year} {car?.CarModel?.Brand?.Name} {car?.CarModel?.Name}";
+            return View("DeleteSuccess");
         }
 
         // GET /Car/GetModelsByBrand/5

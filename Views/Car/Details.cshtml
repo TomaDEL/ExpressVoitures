@@ -1,0 +1,109 @@
+﻿@model ExpressVoitures.Domain.Car
+
+@{
+    ViewData["Title"] = $"{Model.CarModel?.Brand?.Name} {Model.CarModel?.Name}";
+    ViewData["Page"] = "Accueil";
+}
+
+<div style="padding: 48px 64px;">
+
+    <!-- Lien retour -->
+    <a class="lien-retour"
+       asp-controller="Car"
+       asp-action="Index"
+       aria-label="Retour au catalogue">
+        ← Retour
+    </a>
+
+    <!-- Contenu principal : photo + infos -->
+    <div class="d-flex align-items-start" style="margin-top: 48px; gap: 64px;">
+
+        <!-- Colonne gauche : photo -->
+        <div style="width: 55%; flex-shrink: 0;">
+            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+            {
+                <img src="@Model.PhotoUrl"
+                     alt="Photo de la @Model.CarModel?.Brand?.Name @Model.CarModel?.Name"
+                     style="width: 100%; border-radius: 8px; object-fit: cover;" />
+            }
+            else
+            {
+                <div style="width: 100%; height: 400px; background: #f5f0eb;
+                                display: flex; align-items: center; justify-content: center;
+                                border-radius: 8px; color: var(--ev-gris-texte);">
+                    Aucune photo disponible
+                </div>
+            }
+        </div>
+
+        <!-- Colonne droite : infos -->
+        <div style="flex-grow: 1;">
+
+            <!-- Boutons admin (visibles uniquement si connecté) -->
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <p style="font-size: 14px; margin-bottom: 16px;">
+                    Vous avez publié cette annonce, vous pouvez le :
+                    <a asp-controller="Car"
+                       asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       style="color: var(--ev-gris-texte); margin-left: 8px;">
+                        modifier
+                    </a>
+                    <form asp-controller="Car"
+                          asp-action="SetUnavailable"
+                          asp-route-id="@Model.Id"
+                          method="post"
+                          style="display: inline; margin-left: 8px;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="lien-supprimer"
+                                style="background: none; border: none;
+                                           cursor: pointer; padding: 0;"
+                                onclick="return confirm('Confirmer la suppression ?')">
+                            supprimer
+                        </button>
+                    </form>
+                </p>
+            }
+
+            <!-- Prix de vente -->
+            <h2 style="font-family: 'Playfair Display', serif;
+                        font-size: 32px; font-weight: 700;
+                        margin-bottom: 16px;">
+                Prix de vente :
+                @((ViewBag.SellingPrice as decimal?)?.ToString("C",
+                                new System.Globalization.CultureInfo("fr-FR")))
+            </h2>
+
+            <hr style="border-color: #f0ebe4; margin-bottom: 24px;" />
+
+            <!-- Caractéristiques -->
+            <p style="color: var(--ev-gris-texte); font-size: 16px;
+                       margin-bottom: 12px;">
+                @Model.Year
+            </p>
+            <p style="color: var(--ev-gris-texte); font-size: 16px;
+                       margin-bottom: 12px;">
+                @Model.CarModel?.Brand?.Name
+            </p>
+            <p style="color: var(--ev-gris-texte); font-size: 16px;
+                       margin-bottom: 12px;">
+                @Model.CarModel?.Name
+            </p>
+            <p style="color: var(--ev-gris-texte); font-size: 16px;
+                       margin-bottom: 12px;">
+                @Model.Trim?.Name
+            </p>
+
+            <!-- Description si disponible -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <hr style="border-color: #f0ebe4; margin: 24px 0;" />
+                <p style="font-size: 15px; line-height: 1.7;">
+                    @Model.Description
+                </p>
+            }
+        </div>
+    </div>
+</div>

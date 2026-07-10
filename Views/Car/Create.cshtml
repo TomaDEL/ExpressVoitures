@@ -1,0 +1,254 @@
+﻿@model ExpressVoitures.Domain.Car
+
+@{
+    ViewData["Title"] = "Ajouter une voiture";
+    ViewData["Page"] = "Ajouter";
+}
+
+<div style="padding: 48px 64px; max-width: 600px; margin: 0 auto;">
+
+    <!-- Titre -->
+    <div class="text-center" style="margin-bottom: 32px;">
+        <h1 class="titre-principal">Ajouter une voiture</h1>
+        <p style="color: var(--ev-gris-texte); font-size: 14px;">
+            tous les champs sont obligatoires
+        </p>
+    </div>
+
+    <!-- Formulaire -->
+    <form asp-controller="Car"
+          asp-action="Create"
+          method="post"
+          enctype="multipart/form-data">
+
+        @Html.AntiForgeryToken()
+
+        <!-- Messages d'erreur globaux -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert" role="alert"
+                 style="background: #fdf0f0; border: 1px solid var(--ev-rouge);
+                            border-radius: 6px; padding: 12px 16px; margin-bottom: 24px;
+                            color: var(--ev-rouge); font-size: 14px;">
+                Veuillez corriger les erreurs ci-dessous.
+            </div>
+        }
+
+        <!-- Prix d'achat -->
+        <div style="margin-bottom: 20px;">
+            <label asp-for="PurchasePrice"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Prix d'achat (€)
+            </label>
+            <input asp-for="PurchasePrice"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                          border-radius: 6px; font-size: 15px; color: var(--ev-marron);"
+                   aria-required="true" />
+            <span asp-validation-for="PurchasePrice"
+                  style="color: var(--ev-rouge); font-size: 13px;"></span>
+        </div>
+
+        <!-- Année -->
+        <div style="margin-bottom: 20px;">
+            <label asp-for="Year"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Année
+            </label>
+            <input asp-for="Year"
+                   type="number"
+                   min="1990"
+                   max="@DateTime.Now.Year"
+                   style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                          border-radius: 6px; font-size: 15px; color: var(--ev-marron);"
+                   aria-required="true" />
+            <span asp-validation-for="Year"
+                  style="color: var(--ev-rouge); font-size: 13px;"></span>
+        </div>
+
+        <!-- Marque -->
+        <div style="margin-bottom: 20px;">
+            <label for="BrandId"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Marque
+            </label>
+            <select id="BrandId"
+                    name="BrandId"
+                    style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                           background: white;"
+                    aria-required="true">
+                <option value="">-- Sélectionnez une marque --</option>
+                @foreach (var brand in ViewBag.Brands as
+                                IEnumerable<ExpressVoitures.Domain.Brand>)
+                {
+                    <option value="@brand.Id">@brand.Name</option>
+                }
+            </select>
+        </div>
+
+        <!-- Modèle (chargé dynamiquement via AJAX) -->
+        <div style="margin-bottom: 20px;">
+            <label for="CarModelId"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Modèle
+            </label>
+            <select id="CarModelId"
+                    name="CarModelId"
+                    asp-for="CarModelId"
+                    style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                           background: white;"
+                    aria-required="true"
+                    disabled>
+                <option value="">-- Choisissez d'abord une marque --</option>
+            </select>
+            <span asp-validation-for="CarModelId"
+                  style="color: var(--ev-rouge); font-size: 13px;"></span>
+        </div>
+
+        <!-- Finition (chargée dynamiquement via AJAX) -->
+        <div style="margin-bottom: 20px;">
+            <label for="TrimId"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Finition
+            </label>
+            <select id="TrimId"
+                    name="TrimId"
+                    asp-for="TrimId"
+                    style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                           background: white;"
+                    aria-required="true"
+                    disabled>
+                <option value="">-- Choisissez d'abord un modèle --</option>
+            </select>
+            <span asp-validation-for="TrimId"
+                  style="color: var(--ev-rouge); font-size: 13px;"></span>
+        </div>
+
+        <!-- Date d'achat -->
+        <div style="margin-bottom: 20px;">
+            <label asp-for="PurchaseDate"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Date d'achat
+            </label>
+            <input asp-for="PurchaseDate"
+                   type="date"
+                   style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                          border-radius: 6px; font-size: 15px; color: var(--ev-marron);"
+                   aria-required="true" />
+            <span asp-validation-for="PurchaseDate"
+                  style="color: var(--ev-rouge); font-size: 13px;"></span>
+        </div>
+
+        <!-- Description (optionnel) -->
+        <div style="margin-bottom: 20px;">
+            <label asp-for="Description"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Description
+                <span style="color: var(--ev-gris-texte); font-size: 12px;">
+                    (optionnel)
+                </span>
+            </label>
+            <textarea asp-for="Description"
+                      rows="4"
+                      style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
+                             border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                             resize: vertical;"></textarea>
+        </div>
+
+        <!-- Photo (optionnel) -->
+        <div style="margin-bottom: 32px;">
+            <label for="PhotoFile"
+                   style="display: block; font-size: 14px;
+                          margin-bottom: 6px; color: var(--ev-marron);">
+                Visuel
+                <span style="color: var(--ev-gris-texte); font-size: 12px;">
+                    (optionnel)
+                </span>
+            </label>
+            <div style="border: 1px solid #d0c8be; border-radius: 6px;
+                        padding: 24px; text-align: center; background: #faf8f5;">
+                <input type="file"
+                       id="PhotoFile"
+                       name="PhotoFile"
+                       accept="image/*"
+                       style="font-size: 14px; color: var(--ev-gris-texte);"
+                       aria-label="Ajouter une image de la voiture" />
+            </div>
+        </div>
+
+        <!-- Bouton Publier -->
+        <div class="text-center">
+            <button type="submit" class="btn-express">
+                Publier
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Quand Jacques change la marque → charge les modèles correspondants
+        document.getElementById('BrandId').addEventListener('change', function () {
+            var brandId = this.value;
+            var modelSelect = document.getElementById('CarModelId');
+            var trimSelect = document.getElementById('TrimId');
+
+            // Réinitialise les deux menus dépendants
+            modelSelect.innerHTML = '<option value="">-- Choisissez un modèle --</option>';
+            trimSelect.innerHTML = '<option value="">-- Choisissez d\'abord un modèle --</option>';
+            modelSelect.disabled = true;
+            trimSelect.disabled = true;
+
+            if (brandId) {
+                // Appel AJAX vers notre endpoint
+                fetch('/Car/GetModelsByBrand?brandId=' + brandId)
+                    .then(response => response.json())
+                    .then(models => {
+                        models.forEach(function (model) {
+                            var option = document.createElement('option');
+                            option.value = model.id;
+                            option.textContent = model.name;
+                            modelSelect.appendChild(option);
+                        });
+                        modelSelect.disabled = false;
+                    });
+            }
+        });
+
+        // Quand Jacques change le modèle → charge les finitions correspondantes
+        document.getElementById('CarModelId').addEventListener('change', function () {
+            var carModelId = this.value;
+            var trimSelect = document.getElementById('TrimId');
+
+            trimSelect.innerHTML = '<option value="">-- Choisissez une finition --</option>';
+            trimSelect.disabled = true;
+
+            if (carModelId) {
+                fetch('/Car/GetTrimsByModel?carModelId=' + carModelId)
+                    .then(response => response.json())
+                    .then(trims => {
+                        trims.forEach(function (trim) {
+                            var option = document.createElement('option');
+                            option.value = trim.id;
+                            option.textContent = trim.name;
+                            trimSelect.appendChild(option);
+                        });
+                        trimSelect.disabled = false;
+                    });
+            }
+        });
+    </script>
+}

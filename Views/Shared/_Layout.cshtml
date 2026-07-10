@@ -1,50 +1,188 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ExpressVoitures</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ExpressVoitures.styles.css" asp-append-version="true" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
+
+    <!-- Google Fonts : Playfair Display pour les titres -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap"
+          rel="stylesheet" />
+
+    <style>
+        /* ── Variables de couleur issues de la maquette ── */
+        :root {
+            --ev-marron:     #2C1A0E;
+            --ev-dore:       #C49A4A;
+            --ev-rouge:      #8B0000;
+            --ev-gris-texte: #7A6A5A;
+            --ev-fond:       #FFFFFF;
+        }
+
+        /* ── Base ── */
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--ev-marron);
+            background-color: var(--ev-fond);
+            margin: 0;
+        }
+
+        /* ── Navigation ── */
+        .navbar-express {
+            padding: 16px 32px;
+            border-bottom: 1px solid #f0ebe4;
+        }
+
+        .navbar-brand-express {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--ev-marron) !important;
+            text-decoration: none;
+        }
+
+        .nav-link-express {
+            font-family: 'Lato', sans-serif;
+            font-size: 15px;
+            color: var(--ev-marron) !important;
+            text-decoration: none;
+            padding: 0 24px;
+        }
+
+        .nav-link-express.active {
+            font-weight: 700;
+        }
+
+        .nav-link-express:hover {
+            color: var(--ev-dore) !important;
+        }
+
+        /* ── Boutons ── */
+        .btn-express {
+            background-color: var(--ev-dore);
+            color: var(--ev-marron);
+            font-family: 'Lato', sans-serif;
+            font-size: 15px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-express:hover {
+            background-color: #b8893a;
+            color: var(--ev-marron);
+        }
+
+        /* ── Titres ── */
+        .titre-principal {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 42px;
+            color: var(--ev-marron);
+            text-align: center;
+        }
+
+        /* ── Lien retour ── */
+        .lien-retour {
+            color: var(--ev-gris-texte);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .lien-retour:hover {
+            color: var(--ev-marron);
+        }
+
+        /* ── Lien supprimer ── */
+        .lien-supprimer {
+            color: var(--ev-rouge);
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        /* ── Accessibilité : focus visible ── */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid var(--ev-dore);
+            outline-offset: 2px;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+
+    <!-- ── Navigation ── -->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ExpressVoitures</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
+        <nav class="navbar-express d-flex justify-content-between align-items-center"
+             role="navigation" aria-label="Navigation principale">
+
+            <!-- Logo -->
+            <a class="navbar-brand-express"
+               asp-controller="Car"
+               asp-action="Index"
+               aria-label="Express Voitures — Retour à l'accueil">
+                Express Voitures
+            </a>
+
+            <!-- Liens de navigation -->
+            <div class="d-flex align-items-center">
+                <a class="nav-link-express @(ViewData["Page"]?.ToString() == "Accueil" ? "active" : "")"
+                   asp-controller="Car"
+                   asp-action="Index"
+                   aria-current="@(ViewData["Page"]?.ToString() == "Accueil" ? "page" : "false")">
+                    Accueil
+                </a>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a class="nav-link-express @(ViewData["Page"]?.ToString() == "Ajouter" ? "active" : "")"
+                       asp-controller="Car"
+                       asp-action="Create"
+                       aria-current="@(ViewData["Page"]?.ToString() == "Ajouter" ? "page" : "false")">
+                        Ajouter une voiture
+                    </a>
+
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="/"
+                          method="post"
+                          style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="nav-link-express @(ViewData["Page"]?.ToString() == "Deconnecter" ? "active" : "")"
+                                style="background:none; border:none; cursor:pointer; padding:0 24px;">
+                            Se déconnecter
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="nav-link-express"
+                       asp-area="Identity"
+                       asp-page="/Account/Login">
+                        Se connecter
+                    </a>
+                }
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ExpressVoitures - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- ── Contenu principal ── -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
