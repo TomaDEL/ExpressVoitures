@@ -2,6 +2,7 @@
 using ExpressVoitures.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using ExpressVoitures.Models;
 
 namespace ExpressVoitures.Controllers
 {
@@ -26,14 +27,27 @@ namespace ExpressVoitures.Controllers
         {
             var cars = await _carService.GetAllCarsAsync();
 
-            // Calcule le prix de vente pour cahque voiture et le stocke dans un dictionnaire Id -> Prix
-            var sellingPrices = new Dictionary<int, decimal>();
-            foreach (var car in cars)
+            var viewModel = new CarIndexViewModel
             {
-                sellingPrices[car.Id] = await _carService.GetSellingPriceAsync(car.Id);
-            }
-            ViewBag.SellingPrices = sellingPrices;
-            return View(cars);
+                Cars = cars,
+                SellingPrices = await _carService.GetAllSellingPricesAsync(cars)
+            };
+
+            return View(viewModel);
+
+            //// Calcule le prix de vente pour chaque voiture et le stocke dans un dictionnaire Id -> Prix
+            //var sellingPrices = new Dictionary<int, decimal>();
+            //foreach (var car in cars)
+            //{
+            //    sellingPrices[car.Id] = await _carService.GetSellingPriceAsync(car.Id);
+            //}
+            ////var carsWithPrices = cars.Select(car => new
+            ////{
+            ////    Car = car,
+            ////    SellingPrice = sellingPrices[car.Id]
+            ////}).ToList();
+            //ViewBag.SellingPrices = sellingPrices;
+            //return View(cars);
         }
 
         // GET /Car/Details/5 - fiche détail public
@@ -86,7 +100,7 @@ namespace ExpressVoitures.Controllers
                 }
 
                 await _carService.AddCarAsync(car);
-                return RedirectToAction("CreateSuccess");
+                return RedirectToAction("Details", new { id = car.Id });
             }
 
             ViewBag.Brands = await _brandService.GetAllBrandsAsync();

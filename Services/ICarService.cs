@@ -10,5 +10,6 @@ namespace ExpressVoitures.Services
         Task UpdateCarAsync(Car car);
         Task SetUnavailableAsync(int id);
         Task<decimal> GetSellingPriceAsync(int carId);
+        Task<Dictionary<int, decimal>> GetAllSellingPricesAsync(IEnumerable<Car> cars);
     }
 }

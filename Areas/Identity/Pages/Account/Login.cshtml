@@ -1,0 +1,98 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Connexion";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div style="min-height: 80vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 48px;">
+
+    <!-- Titre -->
+    <h1 style="font-family: 'Playfair Display', serif;
+               font-size: 42px; color: var(--ev-marron);
+               margin-bottom: 32px; text-align: center;">
+        Express Voitures
+    </h1>
+
+    <!-- Carte formulaire -->
+    <div style="background: white; border: 1px solid #e8e0d8;
+                border-radius: 12px; padding: 40px; width: 100%;
+                max-width: 460px;
+                box-shadow: 0 2px 16px rgba(0,0,0,0.06);">
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Messages d'erreur -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div role="alert"
+                     style="background: #fdf0f0; border: 1px solid var(--ev-rouge);
+                                border-radius: 6px; padding: 12px 16px;
+                                margin-bottom: 20px; color: var(--ev-rouge);
+                                font-size: 14px;">
+                    Email ou mot de passe incorrect.
+                </div>
+            }
+
+            <!-- Email -->
+            <div style="margin-bottom: 20px;">
+                <label for="Input_Email"
+                       style="display: block; font-size: 14px;
+                              margin-bottom: 6px; color: var(--ev-marron);">
+                    Adresse email
+                </label>
+                <input asp-for="Input.Email"
+                       type="email"
+                       autocomplete="username"
+                       aria-required="true"
+                       style="width: 100%; padding: 10px 14px;
+                              border: 1px solid #d0c8be; border-radius: 6px;
+                              font-size: 15px; color: var(--ev-marron);
+                              box-sizing: border-box;" />
+                <span asp-validation-for="Input.Email"
+                      style="color: var(--ev-rouge); font-size: 13px;"></span>
+            </div>
+
+            <!-- Mot de passe -->
+            <div style="margin-bottom: 32px;">
+                <label for="Input_Password"
+                       style="display: block; font-size: 14px;
+                              margin-bottom: 6px; color: var(--ev-marron);">
+                    Mot de passe
+                </label>
+                <input asp-for="Input.Password"
+                       type="password"
+                       autocomplete="current-password"
+                       aria-required="true"
+                       style="width: 100%; padding: 10px 14px;
+                              border: 1px solid #d0c8be; border-radius: 6px;
+                              font-size: 15px; color: var(--ev-marron);
+                              box-sizing: border-box;" />
+                <span asp-validation-for="Input.Password"
+                      style="color: var(--ev-rouge); font-size: 13px;"></span>
+            </div>
+
+            <!-- Boutons -->
+            <div style="display: flex; align-items: center;
+                        justify-content: center; gap: 16px;">
+                <button type="submit"
+                        class="btn-express">
+                    Se connecter
+                </button>
+
+                <span style="color: var(--ev-gris-texte); font-size: 14px;">
+                    ou
+                </span>
+
+                <a asp-page="/Account/Register"
+                   asp-area="Identity"
+                   class="btn-express">
+                    S'inscrire
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>

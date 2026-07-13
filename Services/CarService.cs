@@ -67,5 +67,19 @@ namespace ExpressVoitures.Services
 
             return car.PurchasePrice + totalRepairs + markup;
         }
+        public async Task<Dictionary<int, decimal>> GetAllSellingPricesAsync(IEnumerable<Car> cars)
+        {
+            // Une seule requête BDD pour le markup
+            var settings = await _context.Settings.FirstOrDefaultAsync();
+            var markup = settings?.Markup ?? 500;
+
+            // LINQ — calcul en mémoire, zéro requête supplémentaire
+            // cars.Select crée une nouvelle liste transformée
+            // ToDictionary la convertit en dictionnaire Id → Prix
+            return cars.ToDictionary(
+                car => car.Id,
+                car => car.PurchasePrice + car.CarRepairs.Sum(r => r.Cost) + markup
+            );
+        }
     }
 }
