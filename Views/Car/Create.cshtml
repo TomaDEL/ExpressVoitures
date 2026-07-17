@@ -74,67 +74,111 @@
         <div style="margin-bottom: 20px;">
             <label for="BrandId"
                    style="display: block; font-size: 14px;
-                          margin-bottom: 6px; color: var(--ev-marron);">
+                  margin-bottom: 6px; color: var(--ev-marron);">
                 Marque
             </label>
             <select id="BrandId"
                     name="BrandId"
                     style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
-                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
-                           background: white;"
-                    aria-required="true">
+                   border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                   background: white;"
+                    aria-required="true"
+                    aria-label="Sélectionnez une marque">
                 <option value="">-- Sélectionnez une marque --</option>
-                @foreach (var brand in ViewBag.Brands as
-                                IEnumerable<ExpressVoitures.Domain.Brand>)
+                @foreach (var brand in ViewBag.Brands as IEnumerable<ExpressVoitures.Domain.Brand>)
                 {
                     <option value="@brand.Id">@brand.Name</option>
                 }
+                <option value="new">+ Nouvelle marque</option>
             </select>
+
+            <!-- Champ texte caché pour nouvelle marque -->
+            <input type="text"
+                   id="NewBrand"
+                   name="NewBrand"
+                   placeholder="Nom de la nouvelle marque"
+                   style="display: none; width: 100%; padding: 10px 14px;
+                  border: 1px solid var(--ev-dore); border-radius: 6px;
+                  font-size: 15px; color: var(--ev-marron); margin-top: 8px;
+                  box-sizing: border-box;"
+                   aria-label="Nom de la nouvelle marque" />
+
+            <span style="color: var(--ev-rouge); font-size: 13px;"
+                  id="BrandError">
+                @Html.ValidationMessage("BrandId")
+            </span>
+            <span style="color: var(--ev-rouge); font-size: 13px;">
+                @Html.ValidationMessage("NewBrand")
+            </span>
         </div>
 
-        <!-- Modèle (chargé dynamiquement via AJAX) -->
+        <!-- Modèle -->
         <div style="margin-bottom: 20px;">
             <label for="CarModelId"
                    style="display: block; font-size: 14px;
-                          margin-bottom: 6px; color: var(--ev-marron);">
+                  margin-bottom: 6px; color: var(--ev-marron);">
                 Modèle
             </label>
             <select id="CarModelId"
                     name="CarModelId"
                     asp-for="CarModelId"
                     style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
-                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
-                           background: white;"
+                   border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                   background: white;"
                     aria-required="true"
+                    aria-label="Sélectionnez un modèle"
                     disabled>
                 <option value="">-- Choisissez d'abord une marque --</option>
             </select>
             <span asp-validation-for="CarModelId"
                   style="color: var(--ev-rouge); font-size: 13px;"></span>
+
+            <!-- Champ texte caché pour nouveau modèle -->
+            <input type="text"
+                   id="NewCarModel"
+                   name="NewCarModel"
+                   placeholder="Nom du nouveau modèle"
+                   style="display: none; width: 100%; padding: 10px 14px;
+                  border: 1px solid var(--ev-dore); border-radius: 6px;
+                  font-size: 15px; color: var(--ev-marron); margin-top: 8px;
+                  box-sizing: border-box;"
+                   aria-label="Nom du nouveau modèle" />
         </div>
 
-        <!-- Finition (chargée dynamiquement via AJAX) -->
+        <!-- Finition -->
         <div style="margin-bottom: 20px;">
             <label for="TrimId"
                    style="display: block; font-size: 14px;
-                          margin-bottom: 6px; color: var(--ev-marron);">
+                  margin-bottom: 6px; color: var(--ev-marron);">
                 Finition
             </label>
             <select id="TrimId"
                     name="TrimId"
                     asp-for="TrimId"
                     style="width: 100%; padding: 10px 14px; border: 1px solid #d0c8be;
-                           border-radius: 6px; font-size: 15px; color: var(--ev-marron);
-                           background: white;"
+                   border-radius: 6px; font-size: 15px; color: var(--ev-marron);
+                   background: white;"
                     aria-required="true"
+                    aria-label="Sélectionnez une finition"
                     disabled>
                 <option value="">-- Choisissez d'abord un modèle --</option>
             </select>
             <span asp-validation-for="TrimId"
                   style="color: var(--ev-rouge); font-size: 13px;"></span>
+
+            <!-- Champ texte caché pour nouvelle finition -->
+            <input type="text"
+                   id="NewTrim"
+                   name="NewTrim"
+                   placeholder="Nom de la nouvelle finition"
+                   style="display: none; width: 100%; padding: 10px 14px;
+                  border: 1px solid var(--ev-dore); border-radius: 6px;
+                  font-size: 15px; color: var(--ev-marron); margin-top: 8px;
+                  box-sizing: border-box;"
+                   aria-label="Nom de la nouvelle finition" />
         </div>
 
-        <!-- Date d'achat -->
+        @* <!-- Date d'achat -->
         <div style="margin-bottom: 20px;">
             <label asp-for="PurchaseDate"
                    style="display: block; font-size: 14px;
@@ -148,7 +192,7 @@
                    aria-required="true" />
             <span asp-validation-for="PurchaseDate"
                   style="color: var(--ev-rouge); font-size: 13px;"></span>
-        </div>
+        </div> *@
 
         <!-- Description (optionnel) -->
         <div style="margin-bottom: 20px;">
@@ -200,54 +244,128 @@
 
 @section Scripts {
     <script>
-        // Quand Jacques change la marque → charge les modèles correspondants
+        // ── Marque ──────────────────────────────────────────
         document.getElementById('BrandId').addEventListener('change', function () {
             var brandId = this.value;
+            var newBrandInput = document.getElementById('NewBrand');
             var modelSelect = document.getElementById('CarModelId');
+            var newModelInput = document.getElementById('NewCarModel');
             var trimSelect = document.getElementById('TrimId');
+            var newTrimInput = document.getElementById('NewTrim');
 
-            // Réinitialise les deux menus dépendants
+            // Réinitialise modèle et finition
             modelSelect.innerHTML = '<option value="">-- Choisissez un modèle --</option>';
             trimSelect.innerHTML = '<option value="">-- Choisissez d\'abord un modèle --</option>';
             modelSelect.disabled = true;
             trimSelect.disabled = true;
+            newModelInput.style.display = 'none';
+            newTrimInput.style.display = 'none';
 
-            if (brandId) {
-                // Appel AJAX vers notre endpoint
+            if (brandId === 'new') {
+                // Affiche le champ texte pour nouvelle marque
+                newBrandInput.style.display = 'block';
+                newBrandInput.required = true;
+
+                // Active directement le champ nouveau modèle
+                newModelInput.style.display = 'block';
+                newModelInput.required = true;
+                modelSelect.disabled = false;
+
+                // Ajoute l'option "nouveau modèle" dans le select
+                modelSelect.innerHTML = '<option value="new">+ Nouveau modèle</option>';
+
+                // Active la finition
+                newTrimInput.style.display = 'block';
+                newTrimInput.required = true;
+                trimSelect.disabled = false;
+                trimSelect.innerHTML = '<option value="new">+ Nouvelle finition</option>';
+
+            } else if (brandId) {
+                // Marque existante → cache le champ texte
+                newBrandInput.style.display = 'none';
+                newBrandInput.required = false;
+
+                // Charge les modèles via AJAX
                 fetch('/Car/GetModelsByBrand?brandId=' + brandId)
-                    .then(response => response.json())
+                    .then(r => r.json())
                     .then(models => {
-                        models.forEach(function (model) {
-                            var option = document.createElement('option');
-                            option.value = model.id;
-                            option.textContent = model.name;
-                            modelSelect.appendChild(option);
+                        models.forEach(function (m) {
+                            var opt = document.createElement('option');
+                            opt.value = m.id;
+                            opt.textContent = m.name;
+                            modelSelect.appendChild(opt);
                         });
+                        // Ajoute l'option nouveau modèle à la fin
+                        var newOpt = document.createElement('option');
+                        newOpt.value = 'new';
+                        newOpt.textContent = '+ Nouveau modèle';
+                        modelSelect.appendChild(newOpt);
                         modelSelect.disabled = false;
+                    });
+            } else {
+                newBrandInput.style.display = 'none';
+                newBrandInput.required = false;
+            }
+        });
+
+        // ── Modèle ──────────────────────────────────────────
+        document.getElementById('CarModelId').addEventListener('change', function () {
+            var carModelId = this.value;
+            var newModelInput = document.getElementById('NewCarModel');
+            var trimSelect = document.getElementById('TrimId');
+            var newTrimInput = document.getElementById('NewTrim');
+
+            trimSelect.innerHTML = '<option value="">-- Choisissez une finition --</option>';
+            trimSelect.disabled = true;
+            newTrimInput.style.display = 'none';
+            newTrimInput.required = false;
+
+            if (carModelId === 'new') {
+                // Affiche le champ texte pour nouveau modèle
+                newModelInput.style.display = 'block';
+                newModelInput.required = true;
+
+                // Active directement la finition
+                newTrimInput.style.display = 'block';
+                newTrimInput.required = true;
+                trimSelect.disabled = false;
+                trimSelect.innerHTML = '<option value="new">+ Nouvelle finition</option>';
+
+            } else if (carModelId) {
+                newModelInput.style.display = 'none';
+                newModelInput.required = false;
+
+                // Charge les finitions via AJAX
+                fetch('/Car/GetTrimsByModel?carModelId=' + carModelId)
+                    .then(r => r.json())
+                    .then(trims => {
+                        trims.forEach(function (t) {
+                            var opt = document.createElement('option');
+                            opt.value = t.id;
+                            opt.textContent = t.name;
+                            trimSelect.appendChild(opt);
+                        });
+                        // Ajoute l'option nouvelle finition à la fin
+                        var newOpt = document.createElement('option');
+                        newOpt.value = 'new';
+                        newOpt.textContent = '+ Nouvelle finition';
+                        trimSelect.appendChild(newOpt);
+                        trimSelect.disabled = false;
                     });
             }
         });
 
-        // Quand Jacques change le modèle → charge les finitions correspondantes
-        document.getElementById('CarModelId').addEventListener('change', function () {
-            var carModelId = this.value;
-            var trimSelect = document.getElementById('TrimId');
+        // ── Finition ─────────────────────────────────────────
+        document.getElementById('TrimId').addEventListener('change', function () {
+            var trimId = this.value;
+            var newTrimInput = document.getElementById('NewTrim');
 
-            trimSelect.innerHTML = '<option value="">-- Choisissez une finition --</option>';
-            trimSelect.disabled = true;
-
-            if (carModelId) {
-                fetch('/Car/GetTrimsByModel?carModelId=' + carModelId)
-                    .then(response => response.json())
-                    .then(trims => {
-                        trims.forEach(function (trim) {
-                            var option = document.createElement('option');
-                            option.value = trim.id;
-                            option.textContent = trim.name;
-                            trimSelect.appendChild(option);
-                        });
-                        trimSelect.disabled = false;
-                    });
+            if (trimId === 'new') {
+                newTrimInput.style.display = 'block';
+                newTrimInput.required = true;
+            } else {
+                newTrimInput.style.display = 'none';
+                newTrimInput.required = false;
             }
         });
     </script>

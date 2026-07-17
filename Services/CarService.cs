@@ -34,6 +34,8 @@ namespace ExpressVoitures.Services
         }
         public async Task AddCarAsync(Car car)
         {
+            // Date de disponibilité = maintenant
+            car.AvailabilityDate = DateTime.Now;
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
         }
@@ -48,6 +50,8 @@ namespace ExpressVoitures.Services
             if (car != null)
             {
                 car.IsAvailable = false;
+                //Date de vente = maintenant
+                car.SaleDate = DateTime.Now;
                 await _context.SaveChangesAsync();
             }
         }

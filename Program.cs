@@ -14,6 +14,17 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+        _ => "Ce champ est obligatoire.");
+    options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor(
+        (_, _) => "La valeur saisie n'est pas valide.");
+    options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(
+        _ => "La valeur saisie n'est pas valide.");
+    options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor(
+        _ => "Ce champ est obligatoire.");
+});
 
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IBrandService, BrandService>();

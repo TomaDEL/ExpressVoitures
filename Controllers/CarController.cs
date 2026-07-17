@@ -77,10 +77,122 @@ namespace ExpressVoitures.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Car car, IFormFile? PhotoFile)
+        public async Task<IActionResult> Create(
+    Car car,
+    IFormFile? PhotoFile,
+    string? NewBrand,
+    string? NewCarModel,
+    string? NewTrim,
+    int? BrandId,
+    string? CarModelIdStr,
+    string? TrimIdStr)
         {
-            if (ModelState.IsValid)
+            // ── Validation manuelle ───────────────────────────────
+            var brandIdValue = Request.Form["BrandId"].ToString();
+            var carModelIdValue = Request.Form["CarModelId"].ToString();
+            var trimIdValue = Request.Form["TrimId"].ToString();
+
+            if (string.IsNullOrEmpty(brandIdValue) ||
+                (brandIdValue != "new" && brandIdValue == ""))
             {
+                ModelState.AddModelError("BrandId",
+                    "La marque est obligatoire.");
+            }
+
+            if (string.IsNullOrEmpty(brandIdValue) == false &&
+                brandIdValue == "new" &&
+                string.IsNullOrEmpty(NewBrand))
+            {
+                ModelState.AddModelError("NewBrand",
+                    "Veuillez saisir le nom de la nouvelle marque.");
+            }
+
+            if (string.IsNullOrEmpty(carModelIdValue) ||
+                carModelIdValue == "0")
+            {
+                ModelState.AddModelError("CarModelId",
+                    "Le modèle est obligatoire.");
+            }
+
+            if (carModelIdValue == "new" &&
+                string.IsNullOrEmpty(NewCarModel))
+            {
+                ModelState.AddModelError("NewCarModel",
+                    "Veuillez saisir le nom du nouveau modèle.");
+            }
+
+            if (string.IsNullOrEmpty(trimIdValue) ||
+                trimIdValue == "0")
+            {
+                ModelState.AddModelError("TrimId",
+                    "La finition est obligatoire.");
+            }
+
+            if (trimIdValue == "new" &&
+                string.IsNullOrEmpty(NewTrim))
+            {
+                ModelState.AddModelError("NewTrim",
+                    "Veuillez saisir le nom de la nouvelle finition.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Brands = await _brandService.GetAllBrandsAsync();
+                return View(car);
+            }
+            try
+            {
+                // ── Gestion de la marque ──────────────────────────
+                int finalBrandId;
+                if (!string.IsNullOrEmpty(NewBrand))
+                {
+                    // Nouvelle marque → on la crée
+                    var brand = new Brand { Name = NewBrand.Trim() };
+                    await _brandService.AddBrandAsync(brand);
+                    finalBrandId = brand.Id;
+                }
+                else
+                {
+                    finalBrandId = BrandId ?? 0;
+                }
+
+                // ── Gestion du modèle ─────────────────────────────
+                int finalCarModelId;
+                if (!string.IsNullOrEmpty(NewCarModel))
+                {
+                    // Nouveau modèle → on le crée lié à la marque
+                    var carModel = new CarModel
+                    {
+                        Name = NewCarModel.Trim(),
+                        BrandId = finalBrandId
+                    };
+                    await _carModelService.AddCarModelAsync(carModel);
+                    finalCarModelId = carModel.Id;
+                }
+                else
+                {
+                    finalCarModelId = car.CarModelId;
+                }
+
+                // ── Gestion de la finition ────────────────────────
+                int finalTrimId;
+                if (!string.IsNullOrEmpty(NewTrim))
+                {
+                    // Nouvelle finition → on la crée liée au modèle
+                    var trim = new Trim
+                    {
+                        Name = NewTrim.Trim(),
+                        CarModelId = finalCarModelId
+                    };
+                    await _trimService.AddTrimAsync(trim);
+                    finalTrimId = trim.Id;
+                }
+                else
+                {
+                    finalTrimId = car.TrimId;
+                }
+
+                // ── Gestion de la photo ───────────────────────────
                 if (PhotoFile != null && PhotoFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(
@@ -99,12 +211,19 @@ namespace ExpressVoitures.Controllers
                     car.PhotoUrl = "/uploads/" + fileName;
                 }
 
-                await _carService.AddCarAsync(car);
-                return RedirectToAction("Details", new { id = car.Id });
-            }
+                // ── Création de la voiture ────────────────────────
+                car.CarModelId = finalCarModelId;
+                car.TrimId = finalTrimId;
+                car.IsAvailable = true;
 
-            ViewBag.Brands = await _brandService.GetAllBrandsAsync();
-            return View(car);
+                await _carService.AddCarAsync(car);
+                return RedirectToAction("CreateSuccess");
+            }
+            catch
+            {
+                ViewBag.Brands = await _brandService.GetAllBrandsAsync();
+                return View(car);
+            }
         }
 
         // GET /Car/CreateSuccess
@@ -134,12 +253,31 @@ namespace ExpressVoitures.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Car car)
+        public async Task<IActionResult> Edit(Car car, IFormFile? PhotoFile)
         {
             if (ModelState.IsValid)
             {
+                if (PhotoFile != null && PhotoFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(
+                        Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    var fileName = Guid.NewGuid().ToString()
+                        + Path.GetExtension(PhotoFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await PhotoFile.CopyToAsync(stream);
+                    }
+
+                    // Remplace l'ancienne photo par la nouvelle
+                    car.PhotoUrl = "/uploads/" + fileName;
+                }
+
                 await _carService.UpdateCarAsync(car);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = car.Id });
             }
 
             ViewBag.Brands = await _brandService.GetAllBrandsAsync();

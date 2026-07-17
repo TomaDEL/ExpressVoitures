@@ -35,6 +35,12 @@ namespace ExpressVoitures.Domain
         [Precision(8, 2)]
         public decimal PurchasePrice { get; set; }
 
+        // Date de disponibilité à la vente (remplie automatiquement à la publication)
+        public DateTime? AvailabilityDate { get; set; }
+
+        // Date de vente (remplie automatiquement quand Jacques marque comme vendue)
+        public DateTime? SaleDate { get; set; }
+
         // Clé étrangère : à quel modèle de voiture appartient cette voiture
         public int CarModelId { get; set; }
 
